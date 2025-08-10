@@ -1,8 +1,24 @@
-<div class="px-4 py-4">
-  <div class="flex justify-between">
-    <div class="text-2xl font-medium">Inventory Management</div>
-    <div class="flex">
-      <button>dark</button>
+<div class="px-4 py-4 bg-gray-200">
+  <div class="flex items-center justify-between gap-4">
+    <!-- Left: Title/date -->
+    <div class="flex items-baseline gap-6">
+      <div class="text-2xl font-semibold">Inventory Management</div>
+      <div>
+        <ul class="flex items-center gap-4">
+          <li class="font-medium">Home</li>
+          <li class="font-medium">Form</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Middle: Search -->
+    <div class="flex justify-center items-center">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        placeholder="Search"
+        class="border border-gray-400 rounded-2xl py-1 px-2 bg-white"
+      />
     </div>
   </div>
 </div>
