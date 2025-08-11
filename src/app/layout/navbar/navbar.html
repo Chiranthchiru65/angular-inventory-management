@@ -1,24 +1,142 @@
-<div class="px-4 py-4 bg-gray-200">
-  <div class="flex items-center justify-between gap-4">
-    <!-- Left: Title/date -->
-    <div class="flex items-baseline gap-6">
-      <div class="text-2xl font-semibold">Inventory Management</div>
-      <div>
-        <ul class="flex items-center gap-4">
-          <li class="font-medium cursor-pointer" routerLink="/home">Home</li>
-          <li class="font-medium cursor-pointer" routerLink="/form">Form</li>
-        </ul>
+<div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+  <div class="px-6 py-2">
+    <div class="flex items-center justify-between gap-6">
+      <!-- Left: Brand and Navigation -->
+      <div class="flex items-center gap-8">
+        <!-- Brand/Title -->
+        <div class="text-xl font-bold text-gray-900 tracking-tight">
+          Inventory Management
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="hidden md:block">
+          <ul class="flex items-center gap-1">
+            <li>
+              <a
+                routerLink="/home"
+                routerLinkActive="bg-emerald-100 text-emerald-700"
+                class="px-4 py-2 rounded-lg font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 cursor-pointer"
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="/form"
+                routerLinkActive="bg-emerald-100 text-emerald-700"
+                class="px-4 py-2 rounded-lg font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 cursor-pointer"
+              >
+                Form
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Right: Search and Actions -->
+      <div class="flex items-center gap-4">
+        <!-- Search Bar -->
+        <div class="relative hidden sm:block">
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+          >
+            <mat-icon class="text-gray-400 text-xl">search</mat-icon>
+          </div>
+          <input
+            matInput
+            placeholder="Search inventory..."
+            class="pl-10 pr-4 py-2.5 w-80 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all duration-200 text-sm placeholder-gray-500"
+          />
+        </div>
+
+        <!-- Mobile Search Button -->
+        <button
+          class="sm:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <mat-icon>search</mat-icon>
+        </button>
+
+        <!-- User Actions -->
+        <div class="flex items-center gap-2">
+          <!-- Notifications -->
+          <button
+            class="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <mat-icon>notifications_none</mat-icon>
+            <!-- Notification Badge -->
+            <span
+              class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"
+            ></span>
+          </button>
+
+          <!-- Settings -->
+          <button
+            class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <mat-icon>settings</mat-icon>
+          </button>
+
+          <!-- User Avatar -->
+          <div class="ml-2 flex items-center">
+            <button
+              class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <div
+                class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center"
+              >
+                <span class="text-white text-sm font-semibold">U</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button
+          class="md:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
       </div>
     </div>
 
-    <!-- Middle: Search -->
-    <div class="flex justify-center items-center">
-      <mat-icon matPrefix>search</mat-icon>
-      <input
-        matInput
-        placeholder="Search"
-        class="border border-gray-400 rounded-2xl py-1 px-2 bg-white"
-      />
-    </div>
+    <!-- Mobile Navigation (Hidden by default, toggle with menu button) -->
+    <nav class="md:hidden mt-4 pt-4 border-t border-gray-200">
+      <ul class="flex flex-col gap-1">
+        <li>
+          <a
+            routerLink="/home"
+            routerLinkActive="bg-emerald-100 text-emerald-700"
+            class="block px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200"
+          >
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/form"
+            routerLinkActive="bg-emerald-100 text-emerald-700"
+            class="block px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200"
+          >
+            Form
+          </a>
+        </li>
+      </ul>
+
+      <!-- Mobile Search -->
+      <div class="mt-4 pt-4 border-t border-gray-200">
+        <div class="relative">
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+          >
+            <mat-icon class="text-gray-400 text-xl">search</mat-icon>
+          </div>
+          <input
+            matInput
+            placeholder="Search inventory..."
+            class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all duration-200 text-sm placeholder-gray-500"
+          />
+        </div>
+      </div>
+    </nav>
   </div>
 </div>
