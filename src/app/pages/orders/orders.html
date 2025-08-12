@@ -1,1 +1,92 @@
-<p>orders works!</p>
+<div class="bg-white rounded-xl p-6 shadow-sm">
+  <div
+    class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-6 mb-8"
+  >
+    <!-- Left: Title and Subtitle -->
+    <div class="flex flex-col">
+      <h2 class="text-2xl font-bold text-gray-900 mb-1">Orders Overview</h2>
+      <p class="text-gray-600 text-sm">Manage and track your order items</p>
+    </div>
+
+    <!-- Right: Search and Actions -->
+    <div
+      class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 xl:min-w-fit"
+    >
+      <!-- Custom Search Input (replacing mat-form-field) -->
+      <div class="relative w-full sm:w-80 min-w-64">
+        <div
+          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+        >
+          <mat-icon class="text-gray-400 text-xl">search</mat-icon>
+        </div>
+        <input
+          type="text"
+          placeholder="Search items..."
+          class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl bg-white focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:outline-none transition-all duration-200 text-sm placeholder-gray-500 shadow-sm"
+        />
+        <!-- Clear button (optional) -->
+        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+          <button
+            class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
+            type="button"
+          >
+            <mat-icon class="text-lg">close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-3">
+        <!-- Filter Button with Dropdown Arrow -->
+        <button
+          mat-stroked-button
+          [matMenuTriggerFor]="filterMenu"
+          class="flex items-center gap-2 px-5 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 rounded-xl font-medium transition-all duration-200 shadow-sm min-w-fit"
+        >
+          <mat-icon class="text-lg">filter_list</mat-icon>
+          <span>Filter</span>
+          <mat-icon class="text-lg">keyboard_arrow_down</mat-icon>
+        </button>
+
+        <!-- Filter Dropdown Menu -->
+        <mat-menu #filterMenu="matMenu" class="mt-2">
+          <button mat-menu-item class="flex items-center gap-3">
+            <mat-icon class="text-emerald-600">inventory_2</mat-icon>
+            <span>In Stock</span>
+          </button>
+          <button mat-menu-item class="flex items-center gap-3">
+            <mat-icon class="text-amber-600">warning</mat-icon>
+            <span>Low Stock</span>
+          </button>
+          <button mat-menu-item class="flex items-center gap-3">
+            <mat-icon class="text-gray-600">remove_circle</mat-icon>
+            <span>Out of Stock</span>
+          </button>
+          <button mat-menu-item class="flex items-center gap-3">
+            <mat-icon class="text-red-600">schedule</mat-icon>
+            <span>Expired</span>
+          </button>
+          <!-- <mat-divider></mat-divider> -->
+          <button mat-menu-item class="flex items-center gap-3">
+            <mat-icon class="text-gray-600">clear</mat-icon>
+            <span>Clear Filters</span>
+          </button>
+        </mat-menu>
+
+        <!-- Add Item Button with Icon -->
+        <button
+          mat-raised-button
+          class="flex items-center gap-2 !bg-emerald-600 hover:!bg-emerald-700 !text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 min-w-fit"
+        >
+          <mat-icon class="text-lg">add</mat-icon>
+          <span>Add Item</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Table -->
+  <div
+    class="rounded-xl overflow-hidden border border-gray-200 shadow-sm md:overflow-x-auto"
+  ></div>
+</div>

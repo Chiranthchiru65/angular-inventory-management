@@ -9,9 +9,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { LucideAngularModule } from 'lucide-angular';
+
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
 export interface Product {
   id: number;
@@ -43,7 +42,6 @@ export interface Product {
     MatMenuModule,
     MatChipsModule,
     MatCheckboxModule,
-    LucideAngularModule,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

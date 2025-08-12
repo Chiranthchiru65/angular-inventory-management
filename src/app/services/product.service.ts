@@ -11,37 +11,37 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  // GET all products
+  // get  all products
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl);
   }
 
-  // GET single product
+  // get one by id single product
   getProduct(id: number): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
 
-  // POST create product
+  // post create product
   createProduct(product: Omit<Product, 'id'>): Observable<Product> {
     return this.http.post<Product>(this.apiUrl, product);
   }
 
-  // PATCH update product
+  // patch update product
   updateProduct(id: number, product: Partial<Product>): Observable<Product> {
     return this.http.patch<Product>(`${this.apiUrl}/${id}`, product);
   }
 
-  // DELETE product
+  // delete product
   deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  // Filter products by category
+  // filter products by category
   getProductsByCategory(category: string): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}?category=${category}`);
   }
 
-  // Search products
+  // search products
   searchProducts(query: string): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}?q=${query}`);
   }
