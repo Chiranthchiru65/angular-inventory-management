@@ -8,8 +8,12 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 import { provideStore } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { counterReducer } from './counter/counter.reducer';
+import { ProductsEffects } from './products/products.effects';
+import { productsReducer } from './products/products.reducer';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -17,10 +21,16 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(),
+    // counter provider
     provideStore({ counter: counterReducer }),
+    // product provider
+    provideStore({
+      products: productsReducer, // Register the products "department" with its chef
+    }),
+    provideEffects([ProductsEffects]),
     provideStoreDevtools({
-      maxAge: 25, // Retains last 25 states
-      logOnly: false, // Set to true in production
+      maxAge: 25,
+      logOnly: false,
     }),
   ],
 };
