@@ -1,18 +1,43 @@
-<div class="bg-white rounded-xl p-6 shadow-sm">
+<div
+  *ngIf="loading$ | async"
+  class="flex flex-col items-center justify-center min-h-96 bg-white rounded-xl shadow-sm"
+>
+  <mat-progress-spinner diameter="50" class="mb-4"></mat-progress-spinner>
+  <p class="text-gray-600 font-medium">Loading products from supplier...</p>
+</div>
+
+<div
+  *ngIf="error$ | async as error"
+  class="flex flex-col items-center justify-center min-h-96 bg-white rounded-xl shadow-sm p-8"
+>
+  <mat-icon class="text-red-500 text-6xl mb-4">error</mat-icon>
+  <p class="text-red-600 font-medium mb-4">{{ error }}</p>
+  <button
+    mat-raised-button
+    (click)="loadProducts()"
+    class="!bg-emerald-600 hover:!bg-emerald-700 !text-white px-6 py-3 rounded-xl font-semibold"
+  >
+    Try Again
+  </button>
+</div>
+
+<div
+  *ngIf="!(loading$ | async) && !(error$ | async)"
+  class="bg-white rounded-xl p-6 shadow-sm"
+>
   <div
     class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-6 mb-8"
   >
-    <!-- Left: Title and Subtitle -->
     <div class="flex flex-col">
-      <h2 class="text-2xl font-bold text-gray-900 mb-1">Products Overview</h2>
-      <p class="text-gray-600 text-sm">Manage and track your product items</p>
+      <h2 class="text-2xl font-bold text-gray-900 mb-1">Product Overview</h2>
+      <p class="text-gray-600 text-sm">
+        Manage and track your product inventory
+      </p>
     </div>
 
-    <!-- Right: Search and Actions -->
     <div
       class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 xl:min-w-fit"
     >
-      <!-- Custom Search Input (replacing mat-form-field) -->
       <div class="relative w-full sm:w-80 min-w-64">
         <div
           class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
@@ -21,12 +46,17 @@
         </div>
         <input
           type="text"
-          placeholder="Search items..."
+          placeholder="Search products..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
           class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl bg-white focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:outline-none transition-all duration-200 text-sm placeholder-gray-500 shadow-sm"
         />
-        <!-- Clear button (optional) -->
-        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+        <div
+          class="absolute inset-y-0 right-0 pr-3 flex items-center"
+          *ngIf="searchTerm"
+        >
           <button
+            (click)="clearSearch()"
             class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
             type="button"
           >
@@ -35,9 +65,7 @@
         </div>
       </div>
 
-      <!-- Action Buttons -->
       <div class="flex gap-3">
-        <!-- Filter Button with Dropdown Arrow -->
         <button
           mat-stroked-button
           [matMenuTriggerFor]="filterMenu"
@@ -48,32 +76,65 @@
           <mat-icon class="text-lg">keyboard_arrow_down</mat-icon>
         </button>
 
-        <!-- Filter Dropdown Menu -->
         <mat-menu #filterMenu="matMenu" class="mt-2">
-          <button mat-menu-item class="flex items-center gap-3">
-            <mat-icon class="text-emerald-600">inventory_2</mat-icon>
-            <span>In Stock</span>
+          <button
+            mat-menu-item
+            (click)="filterByCategory('all')"
+            class="flex items-center gap-3"
+          >
+            <mat-icon class="text-gray-600">all_inclusive</mat-icon>
+            <span>All Categories</span>
           </button>
-          <button mat-menu-item class="flex items-center gap-3">
-            <mat-icon class="text-amber-600">warning</mat-icon>
+          <button
+            mat-menu-item
+            (click)="filterByCategory('Electronics')"
+            class="flex items-center gap-3"
+          >
+            <mat-icon class="text-blue-600">devices</mat-icon>
+            <span>Electronics</span>
+          </button>
+          <button
+            mat-menu-item
+            (click)="filterByCategory('Furniture')"
+            class="flex items-center gap-3"
+          >
+            <mat-icon class="text-amber-600">chair</mat-icon>
+            <span>Furniture</span>
+          </button>
+          <button
+            mat-menu-item
+            (click)="filterByCategory('Clothing')"
+            class="flex items-center gap-3"
+          >
+            <mat-icon class="text-purple-600">checkroom</mat-icon>
+            <span>Clothing</span>
+          </button>
+          <button
+            mat-menu-item
+            (click)="filterByStatus('active')"
+            class="flex items-center gap-3"
+          >
+            <mat-icon class="text-emerald-600">check_circle</mat-icon>
+            <span>Active Products</span>
+          </button>
+          <button
+            mat-menu-item
+            (click)="filterByStatus('low-stock')"
+            class="flex items-center gap-3"
+          >
+            <mat-icon class="text-orange-600">warning</mat-icon>
             <span>Low Stock</span>
           </button>
-          <button mat-menu-item class="flex items-center gap-3">
-            <mat-icon class="text-gray-600">remove_circle</mat-icon>
-            <span>Out of Stock</span>
-          </button>
-          <button mat-menu-item class="flex items-center gap-3">
-            <mat-icon class="text-red-600">schedule</mat-icon>
-            <span>Expired</span>
-          </button>
-          <!-- <mat-divider></mat-divider> -->
-          <button mat-menu-item class="flex items-center gap-3">
+          <button
+            mat-menu-item
+            (click)="clearFilters()"
+            class="flex items-center gap-3"
+          >
             <mat-icon class="text-gray-600">clear</mat-icon>
             <span>Clear Filters</span>
           </button>
         </mat-menu>
 
-        <!-- Add Item Button with Icon -->
         <button
           mat-raised-button
           class="flex items-center gap-2 !bg-emerald-600 hover:!bg-emerald-700 !text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 min-w-fit"
@@ -85,8 +146,265 @@
     </div>
   </div>
 
-  <!-- Products Table -->
   <div
-    class="rounded-xl overflow-hidden border border-gray-200 shadow-sm md:overflow-x-auto"
-  ></div>
+    *ngIf="hasProducts$ | async"
+    class="rounded-xl overflow-hidden border border-gray-200 shadow-sm"
+  >
+    <div class="max-h-96 overflow-y-auto">
+      <table
+        mat-table
+        [dataSource]="paginatedProducts"
+        class="w-full bg-white min-w-[800px]"
+      >
+        <ng-container matColumnDef="id">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-white text-gray-700 font-semibold text-sm px-6 py-4 border-b border-gray-200 text-left sticky top-0 z-10"
+          >
+            ID
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let product"
+            class="!bg-white px-6 py-4 border-b border-gray-100 text-gray-700 align-middle hover:bg-blue-50/50 transition-colors"
+          >
+            <div class="font-medium text-gray-900 text-sm">
+              {{ product.id }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-white text-gray-700 font-semibold text-sm px-6 py-4 border-b border-gray-200 text-left sticky top-0 z-10"
+          >
+            Product Name
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let product"
+            class="!bg-white px-6 py-4 border-b border-gray-100 text-gray-700 align-middle hover:bg-blue-50/50 transition-colors"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-gray-100 shadow-sm"
+              >
+                <img
+                  [src]="product.imageUrl"
+                  [alt]="product.name"
+                  class="w-full h-full object-cover"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                />
+                <div
+                  class="hidden w-full h-full items-center justify-center text-gray-500 text-xs font-bold"
+                >
+                  {{ product.name.charAt(0).toUpperCase() }}
+                </div>
+              </div>
+              <div>
+                <div class="font-semibold text-gray-900">
+                  {{ product.name }}
+                </div>
+                <div class="text-xs text-gray-500" *ngIf="product.sku">
+                  SKU: {{ product.sku }}
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-white text-gray-700 font-semibold text-sm px-6 py-4 border-b border-gray-200 text-left sticky top-0 z-10"
+          >
+            Price
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let product"
+            class="!bg-white px-6 py-4 border-b border-gray-100 text-gray-700 align-middle hover:bg-blue-50/50 transition-colors"
+          >
+            <div class="font-semibold text-gray-900">
+              {{ product.price | currency }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="stock">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-white text-gray-700 font-semibold text-sm px-6 py-4 border-b border-gray-200 text-left sticky top-0 z-10"
+          >
+            Stock
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let product"
+            class="!bg-white px-6 py-4 border-b border-gray-100 text-gray-700 align-middle hover:bg-blue-50/50 transition-colors"
+          >
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-gray-900">{{
+                product.stock
+              }}</span>
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold"
+                [ngClass]="{
+                  'bg-emerald-100 text-emerald-800':
+                    product.stock > product.minStock,
+                  'bg-yellow-100 text-yellow-800':
+                    product.stock <= product.minStock && product.stock > 0,
+                  'bg-red-100 text-red-800': product.stock === 0
+                }"
+              >
+                {{ getStockStatus(product) }}
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="category">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-white text-gray-700 font-semibold text-sm px-6 py-4 border-b border-gray-200 text-left sticky top-0 z-10"
+          >
+            Category
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let product"
+            class="!bg-white px-6 py-4 border-b border-gray-100 text-gray-700 align-middle hover:bg-blue-50/50 transition-colors"
+          >
+            <span
+              class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700"
+            >
+              {{ product.category }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="supplier">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-white text-gray-700 font-semibold text-sm px-6 py-4 border-b border-gray-200 text-left sticky top-0 z-10"
+          >
+            Supplier
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let product"
+            class="!bg-white px-6 py-4 border-b border-gray-100 text-gray-700 align-middle hover:bg-blue-50/50 transition-colors"
+          >
+            <div class="text-gray-600 text-sm font-medium">
+              {{ product.supplier }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="!bg-white text-gray-700 font-semibold text-sm px-6 py-4 border-b border-gray-200 text-left sticky top-0 z-10"
+          >
+            Actions
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let product"
+            class="!bg-white px-6 py-4 border-b border-gray-100 text-gray-700 align-middle hover:bg-blue-50/50 transition-colors"
+          >
+            <div class="flex items-center gap-2">
+              <button
+                (click)="onEdit(product)"
+                class="p-2 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all duration-200"
+                matTooltip="Edit product"
+              >
+                <mat-icon class="text-lg">edit</mat-icon>
+              </button>
+
+              <button
+                (click)="onDelete(product)"
+                class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                matTooltip="More options"
+              >
+                <mat-icon class="text-lg">delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+          class="!bg-white"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="hover:bg-blue-50/30 transition-colors duration-200 cursor-pointer"
+        ></tr>
+      </table>
+    </div>
+
+    <div
+      class="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200"
+    >
+      <div class="flex items-center justify-between">
+        <div class="text-sm text-gray-600">
+          Showing {{ getStartIndex() }} to {{ getEndIndex() }} of
+          {{ filteredProducts.length }} products
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button
+            class="px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-white rounded-lg transition-colors disabled:opacity-50"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+          >
+            <mat-icon class="text-lg">chevron_left</mat-icon>
+          </button>
+
+          <span
+            class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium"
+          >
+            {{ currentPage }} of {{ getTotalPages() }}
+          </span>
+
+          <button
+            class="px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-white rounded-lg transition-colors disabled:opacity-50"
+            [disabled]="currentPage === getTotalPages()"
+            (click)="nextPage()"
+          >
+            <mat-icon class="text-lg">chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="!(hasProducts$ | async)"
+    class="flex flex-col items-center justify-center py-16"
+  >
+    <mat-icon class="text-gray-400 text-8xl mb-4">inventory_2</mat-icon>
+    <h3 class="text-xl font-semibold text-gray-900 mb-2">No Products Found</h3>
+    <p class="text-gray-600 mb-6">
+      No products match your current filters or search criteria.
+    </p>
+    <button
+      mat-raised-button
+      (click)="loadProducts()"
+      class="!bg-emerald-600 hover:!bg-emerald-700 !text-white px-6 py-3 rounded-xl font-semibold"
+    >
+      <mat-icon class="text-lg">add</mat-icon>
+    </button>
+  </div>
 </div>
