@@ -7,6 +7,9 @@ import {
   loadProducts,
   loadProductsSuccess,
   loadProductsFailure,
+  deleteProduct,
+  deleteProductSuccess,
+  deleteProductFailure,
 } from './products.actions';
 
 @Injectable()
@@ -26,6 +29,30 @@ export class ProductsEffects {
             of(
               loadProductsFailure({
                 error: error.message || 'Failed to load products',
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+  deleteProduct$ = createEffect(() =>
+    this.actions$.pipe(
+      // Driver listens for "deleteProduct" orders over the radio
+      ofType(deleteProduct),
+
+      // Driver goes to supplier to remove the product
+      switchMap(({ id }) =>
+        this.productService.deleteProduct(id).pipe(
+          // If successful: Driver confirms "product removed!"
+          map(() => deleteProductSuccess({ id })),
+
+          // If failed: Driver reports "couldn't remove product"
+          catchError((error) =>
+            of(
+              deleteProductFailure({
+                error: error.message || 'Failed to delete product',
+                id,
               })
             )
           )

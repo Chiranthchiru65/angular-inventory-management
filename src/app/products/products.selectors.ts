@@ -23,3 +23,14 @@ export const selectHasProducts = createSelector(
   selectAllProducts,
   (products) => products.length > 0
 );
+// Kitchen assistant who answers: "Which products are being removed right now?"
+export const selectDeletingIds = createSelector(
+  selectProductsState,
+  (state: ProductsState) => state.deletingIds
+);
+
+// Kitchen assistant who answers: "Is this specific product being deleted?"
+export const selectIsProductDeleting = (productId: number) =>
+  createSelector(selectDeletingIds, (deletingIds: number[]) =>
+    deletingIds.includes(productId)
+  );

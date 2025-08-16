@@ -4,10 +4,12 @@ export interface ProductsState {
   products: Product[];
   loading: boolean;
   error: string | null;
+  deletingIds: number[];
 }
 
 export const initialState: ProductsState = {
   products: [],
   loading: false,
   error: null,
+  deletingIds: [],
 };

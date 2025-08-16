@@ -15,12 +15,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { Observable, take } from 'rxjs';
 import { Product } from '../../models/product.model';
-import { loadProducts } from '../../products/products.actions';
+import { loadProducts, deleteProduct } from '../../products/products.actions';
 import {
   selectAllProducts,
   selectProductsError,
   selectProductsLoading,
   selectHasProducts,
+  selectDeletingIds,
 } from '../../products/products.selectors';
 
 @Component({
@@ -221,6 +222,12 @@ export class Products implements OnInit {
   }
 
   onDelete(product: Product): void {
-    console.log('Delete product:', product);
+    // Customer says: "Remove this expired product from inventory!"
+    console.log('Deleting product:', product);
+    this.store.dispatch(deleteProduct({ id: product.id }));
+  }
+
+  isProductDeleting(productId: number, deletingIds: number[] | null): boolean {
+    return deletingIds ? deletingIds.includes(productId) : false;
   }
 }
