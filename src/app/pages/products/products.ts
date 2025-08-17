@@ -23,6 +23,7 @@ import {
   selectHasProducts,
   selectDeletingIds,
 } from '../../products/products.selectors';
+import { AddProductDialog } from '../../components/add-product-dialog/add-product-dialog';
 
 @Component({
   selector: 'app-products',
@@ -41,12 +42,13 @@ import {
     MatCheckboxModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    AddProductDialog,
   ],
   templateUrl: './products.html',
   styles: [],
 })
 export class Products implements OnInit {
-  // oobservables for reactive UI
+  // observables for reactive UI
   products$: Observable<Product[]>;
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
@@ -60,6 +62,9 @@ export class Products implements OnInit {
   selectedCategory: string = 'all';
   selectedStatus: string = 'all';
 
+  // Modal state
+  showAddProductDialog: boolean = false;
+
   displayedColumns: string[] = [
     'id',
     'name',
@@ -71,7 +76,7 @@ export class Products implements OnInit {
   ];
 
   constructor(private store: Store) {
-    // bubscribe to products for real time updates
+    // subscribe to products for real time updates
     this.products$ = this.store.select(selectAllProducts);
     this.loading$ = this.store.select(selectProductsLoading);
     this.error$ = this.store.select(selectProductsError);
@@ -92,6 +97,15 @@ export class Products implements OnInit {
 
   loadProducts(): void {
     this.store.dispatch(loadProducts());
+  }
+
+  // Modal methods
+  openAddProductDialog(): void {
+    this.showAddProductDialog = true;
+  }
+
+  closeAddProductDialog(): void {
+    this.showAddProductDialog = false;
   }
 
   // search query
