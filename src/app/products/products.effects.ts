@@ -10,6 +10,9 @@ import {
   deleteProduct,
   deleteProductSuccess,
   deleteProductFailure,
+  createProduct,
+  createProductSuccess,
+  createProductFailure,
 } from './products.actions';
 
 @Injectable()
@@ -53,6 +56,30 @@ export class ProductsEffects {
               deleteProductFailure({
                 error: error.message || 'Failed to delete product',
                 id,
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+  // The delivery driver effect for creating products
+  createProduct$ = createEffect(() =>
+    this.actions$.pipe(
+      // Driver listens for "createProduct" orders over the radio
+      ofType(createProduct),
+
+      // Driver goes to supplier to add the new product
+      switchMap(({ product }) =>
+        this.productService.createProduct(product).pipe(
+          // If successful: Driver brings back the new product with server-generated ID
+          map((newProduct) => createProductSuccess({ product: newProduct })),
+
+          // If failed: Driver reports "couldn't add new product"
+          catchError((error) =>
+            of(
+              createProductFailure({
+                error: error.message || 'Failed to create product',
               })
             )
           )

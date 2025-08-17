@@ -34,3 +34,8 @@ export const selectIsProductDeleting = (productId: number) =>
   createSelector(selectDeletingIds, (deletingIds: number[]) =>
     deletingIds.includes(productId)
   );
+// Kitchen assistant who answers: "Are we currently adding a new product?"
+export const selectIsCreating = createSelector(
+  selectProductsState,
+  (state: ProductsState) => state.creating
+);

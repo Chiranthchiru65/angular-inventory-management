@@ -19,7 +19,7 @@ import { Product } from '../../models/product.model';
 })
 export class AddProductDialog {
   @Output() closeDialog = new EventEmitter<void>();
-  @Output() productAdded = new EventEmitter<Product>();
+  @Output() productAdded = new EventEmitter<Omit<Product, 'id'>>();
 
   productForm: FormGroup;
 
@@ -46,8 +46,8 @@ export class AddProductDialog {
     if (this.productForm.valid) {
       const formValue = this.productForm.value;
 
-      const product: Product = {
-        id: Date.now(),
+      // Create product WITHOUT id - let server generate it
+      const product: Omit<Product, 'id'> = {
         name: formValue.name,
         sku: formValue.sku,
         description: formValue.description || '',
@@ -60,8 +60,8 @@ export class AddProductDialog {
         imageUrl: formValue.imageUrl || '',
       };
 
-      console.log('New Product:', product);
-      this.productAdded.emit(product);
+      console.log('New Product (no ID):', product);
+      this.productAdded.emit(product); // Emits product without ID
       this.onClose();
     } else {
       this.productForm.markAllAsTouched();

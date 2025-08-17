@@ -5,6 +5,7 @@ export interface ProductsState {
   loading: boolean;
   error: string | null;
   deletingIds: number[];
+  creating: boolean;
 }
 
 export const initialState: ProductsState = {
@@ -12,4 +13,5 @@ export const initialState: ProductsState = {
   loading: false,
   error: null,
   deletingIds: [],
+  creating: false,
 };

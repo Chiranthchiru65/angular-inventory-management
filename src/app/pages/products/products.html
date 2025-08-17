@@ -413,6 +413,7 @@
 <!-- Add Product Dialog Modal -->
 <app-add-product-dialog
   *ngIf="showAddProductDialog"
+  (productAdded)="onProductAdded($event)"
   (closeDialog)="closeAddProductDialog()"
 >
 </app-add-product-dialog>

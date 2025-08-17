@@ -13,15 +13,20 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
-import { Observable, take } from 'rxjs';
+import { Observable, take, Subscription } from 'rxjs';
 import { Product } from '../../models/product.model';
-import { loadProducts, deleteProduct } from '../../products/products.actions';
+import {
+  loadProducts,
+  deleteProduct,
+  createProduct,
+} from '../../products/products.actions';
 import {
   selectAllProducts,
   selectProductsError,
   selectProductsLoading,
   selectHasProducts,
   selectDeletingIds,
+  selectIsCreating,
 } from '../../products/products.selectors';
 import { AddProductDialog } from '../../components/add-product-dialog/add-product-dialog';
 
@@ -53,6 +58,7 @@ export class Products implements OnInit {
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
   hasProducts$: Observable<boolean>;
+  isCreating$: Observable<boolean>;
 
   searchTerm: string = '';
   filteredProducts: Product[] = [];
@@ -64,7 +70,7 @@ export class Products implements OnInit {
 
   // Modal state
   showAddProductDialog: boolean = false;
-
+  private subscriptions = new Subscription();
   displayedColumns: string[] = [
     'id',
     'name',
@@ -81,6 +87,7 @@ export class Products implements OnInit {
     this.loading$ = this.store.select(selectProductsLoading);
     this.error$ = this.store.select(selectProductsError);
     this.hasProducts$ = this.store.select(selectHasProducts);
+    this.isCreating$ = this.store.select(selectIsCreating);
 
     this.products$.subscribe((products) => {
       console.log('Products from the store:', products);
@@ -93,8 +100,18 @@ export class Products implements OnInit {
     this.products$.subscribe((products) => {
       this.applyFilters(products);
     });
+    this.subscriptions.add(
+      this.isCreating$.subscribe((isCreating) => {
+        if (!isCreating && this.showAddProductDialog) {
+          // If we were creating and now we're not, close the dialog
+          this.showAddProductDialog = false;
+        }
+      })
+    );
   }
-
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
   loadProducts(): void {
     this.store.dispatch(loadProducts());
   }
@@ -243,5 +260,10 @@ export class Products implements OnInit {
 
   isProductDeleting(productId: number, deletingIds: number[] | null): boolean {
     return deletingIds ? deletingIds.includes(productId) : false;
+  }
+  onProductAdded(productData: Omit<Product, 'id'>): void {
+    // Customer says: "Add this new product to our inventory!"
+    console.log('Adding new product:', productData);
+    this.store.dispatch(createProduct({ product: productData }));
   }
 }

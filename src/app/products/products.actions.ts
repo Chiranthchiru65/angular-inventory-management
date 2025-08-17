@@ -29,3 +29,21 @@ export const deleteProductFailure = createAction(
   '[Products] Delete Product Failure',
   props<{ error: string; id: number }>()
 );
+
+// Customer says: "Add this new product to our inventory!"
+export const createProduct = createAction(
+  '[Products] Create Product',
+  props<{ product: Omit<Product, 'id'> }>()
+);
+
+// Delivery driver returns: "New product added to supplier successfully!"
+export const createProductSuccess = createAction(
+  '[Products] Create Product Success',
+  props<{ product: Product }>()
+);
+
+// Delivery driver returns: "Couldn't add new product to supplier!"
+export const createProductFailure = createAction(
+  '[Products] Create Product Failure',
+  props<{ error: string }>()
+);
