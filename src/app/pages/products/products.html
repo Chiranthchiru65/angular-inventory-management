@@ -417,3 +417,10 @@
   (closeDialog)="closeAddProductDialog()"
 >
 </app-add-product-dialog>
+<app-add-product-dialog
+  *ngIf="showEditDialog"
+  [editProduct]="editingProduct"
+  (productUpdated)="onProductUpdated($event)"
+  (closeDialog)="closeEditDialog()"
+>
+</app-add-product-dialog>

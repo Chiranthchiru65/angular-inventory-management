@@ -9,6 +9,9 @@ import {
   createProduct,
   createProductSuccess,
   createProductFailure,
+  updateProduct,
+  updateProductSuccess,
+  updateProductFailure,
 } from './products.actions';
 import { ProductsState, initialState } from './products.state';
 
@@ -73,5 +76,25 @@ export const productsReducer = createReducer(
     ...state,
     creating: false,
     error: `Failed to create product: ${error}`,
+  })),
+  // When chef hears "updateProduct": Put up "Updating product..." sign
+  on(updateProduct, (state) => ({
+    ...state,
+    updating: true,
+    error: null, // Clear any previous errors
+  })),
+
+  // When driver confirms product updated: Replace old product with updated one
+  on(updateProductSuccess, (state, { product }) => ({
+    ...state,
+    products: state.products.map((p) => (p.id === product.id ? product : p)),
+    updating: false,
+  })),
+
+  // When driver fails to update product: Remove "updating" sign, show error
+  on(updateProductFailure, (state, { error }) => ({
+    ...state,
+    updating: false,
+    error: `Failed to update product: ${error}`,
   }))
 );

@@ -47,3 +47,20 @@ export const createProductFailure = createAction(
   '[Products] Create Product Failure',
   props<{ error: string }>()
 );
+// Customer says: "Update this product information!"
+export const updateProduct = createAction(
+  '[Products] Update Product',
+  props<{ id: number; product: Product }>()
+);
+
+// Delivery driver returns: "Product updated successfully!"
+export const updateProductSuccess = createAction(
+  '[Products] Update Product Success',
+  props<{ product: Product }>()
+);
+
+// Delivery driver returns: "Couldn't update product!"
+export const updateProductFailure = createAction(
+  '[Products] Update Product Failure',
+  props<{ error: string }>()
+);

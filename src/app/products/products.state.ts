@@ -6,6 +6,7 @@ export interface ProductsState {
   error: string | null;
   deletingIds: number[];
   creating: boolean;
+  updating: boolean;
 }
 
 export const initialState: ProductsState = {
@@ -14,4 +15,5 @@ export const initialState: ProductsState = {
   error: null,
   deletingIds: [],
   creating: false,
+  updating: false,
 };

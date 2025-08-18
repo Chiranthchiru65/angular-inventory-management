@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -18,8 +18,10 @@ import { Product } from '../../models/product.model';
   styles: [],
 })
 export class AddProductDialog {
+  @Input() editProduct?: Product; // If provided, we're in edit mode
   @Output() closeDialog = new EventEmitter<void>();
   @Output() productAdded = new EventEmitter<Omit<Product, 'id'>>();
+  @Output() productUpdated = new EventEmitter<Product>();
 
   productForm: FormGroup;
 
@@ -38,6 +40,36 @@ export class AddProductDialog {
     });
   }
 
+  ngOnInit(): void {
+    // Pre-populate form if we're in edit mode
+    if (this.editProduct) {
+      this.productForm.patchValue({
+        name: this.editProduct.name,
+        sku: this.editProduct.sku,
+        description: this.editProduct.description,
+        category: this.editProduct.category,
+        price: this.editProduct.price,
+        stock: this.editProduct.stock,
+        minStock: this.editProduct.minStock,
+        status: this.editProduct.status,
+        supplier: this.editProduct.supplier,
+        imageUrl: this.editProduct.imageUrl,
+      });
+    }
+  }
+
+  get isEditMode(): boolean {
+    return !!this.editProduct;
+  }
+
+  get dialogTitle(): string {
+    return this.isEditMode ? 'Edit Product' : 'Add New Product';
+  }
+
+  get submitButtonText(): string {
+    return this.isEditMode ? 'Update Product' : 'Add Product';
+  }
+
   onClose(): void {
     this.closeDialog.emit();
   }
@@ -46,22 +78,43 @@ export class AddProductDialog {
     if (this.productForm.valid) {
       const formValue = this.productForm.value;
 
-      // Create product WITHOUT id - let server generate it
-      const product: Omit<Product, 'id'> = {
-        name: formValue.name,
-        sku: formValue.sku,
-        description: formValue.description || '',
-        category: formValue.category,
-        price: parseFloat(formValue.price),
-        stock: parseInt(formValue.stock),
-        minStock: parseInt(formValue.minStock),
-        status: formValue.status,
-        supplier: formValue.supplier,
-        imageUrl: formValue.imageUrl || '',
-      };
+      if (this.isEditMode) {
+        // We're updating an existing product
+        const updatedProduct: Product = {
+          id: this.editProduct!.id,
+          name: formValue.name,
+          sku: formValue.sku,
+          description: formValue.description || '',
+          category: formValue.category,
+          price: parseFloat(formValue.price),
+          stock: parseInt(formValue.stock),
+          minStock: parseInt(formValue.minStock),
+          status: formValue.status,
+          supplier: formValue.supplier,
+          imageUrl: formValue.imageUrl || '',
+        };
 
-      console.log('New Product (no ID):', product);
-      this.productAdded.emit(product); // Emits product without ID
+        console.log('Updating product:', updatedProduct);
+        this.productUpdated.emit(updatedProduct);
+      } else {
+        // We're creating a new product (without ID)
+        const product: Omit<Product, 'id'> = {
+          name: formValue.name,
+          sku: formValue.sku,
+          description: formValue.description || '',
+          category: formValue.category,
+          price: parseFloat(formValue.price),
+          stock: parseInt(formValue.stock),
+          minStock: parseInt(formValue.minStock),
+          status: formValue.status,
+          supplier: formValue.supplier,
+          imageUrl: formValue.imageUrl || '',
+        };
+
+        console.log('Creating new product:', product);
+        this.productAdded.emit(product);
+      }
+
       this.onClose();
     } else {
       this.productForm.markAllAsTouched();

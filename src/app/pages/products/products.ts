@@ -19,6 +19,7 @@ import {
   loadProducts,
   deleteProduct,
   createProduct,
+  updateProduct,
 } from '../../products/products.actions';
 import {
   selectAllProducts,
@@ -27,6 +28,7 @@ import {
   selectHasProducts,
   selectDeletingIds,
   selectIsCreating,
+  selectIsUpdating,
 } from '../../products/products.selectors';
 import { AddProductDialog } from '../../components/add-product-dialog/add-product-dialog';
 
@@ -59,6 +61,7 @@ export class Products implements OnInit {
   error$: Observable<string | null>;
   hasProducts$: Observable<boolean>;
   isCreating$: Observable<boolean>;
+  isUpdating$: Observable<boolean>;
 
   searchTerm: string = '';
   filteredProducts: Product[] = [];
@@ -67,7 +70,8 @@ export class Products implements OnInit {
   pageSize: number = 20;
   selectedCategory: string = 'all';
   selectedStatus: string = 'all';
-
+  showEditDialog: boolean = false;
+  editingProduct?: Product;
   // Modal state
   showAddProductDialog: boolean = false;
   private subscriptions = new Subscription();
@@ -83,6 +87,8 @@ export class Products implements OnInit {
 
   constructor(private store: Store) {
     // subscribe to products for real time updates
+    this.isUpdating$ = this.store.select(selectIsUpdating);
+
     this.products$ = this.store.select(selectAllProducts);
     this.loading$ = this.store.select(selectProductsLoading);
     this.error$ = this.store.select(selectProductsError);
@@ -92,6 +98,15 @@ export class Products implements OnInit {
     this.products$.subscribe((products) => {
       console.log('Products from the store:', products);
     });
+
+    this.subscriptions.add(
+      this.isUpdating$.subscribe((isUpdating) => {
+        if (!isUpdating && this.showEditDialog) {
+          this.showEditDialog = false;
+          this.editingProduct = undefined;
+        }
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -246,6 +261,8 @@ export class Products implements OnInit {
 
   onEdit(product: Product): void {
     console.log('Edit product:', product);
+    this.editingProduct = product;
+    this.showEditDialog = true;
   }
 
   onView(product: Product): void {
@@ -265,5 +282,18 @@ export class Products implements OnInit {
     // Customer says: "Add this new product to our inventory!"
     console.log('Adding new product:', productData);
     this.store.dispatch(createProduct({ product: productData }));
+  }
+  onProductUpdated(updatedProduct: Product): void {
+    console.log('Updating product:', updatedProduct);
+    this.store.dispatch(
+      updateProduct({
+        id: updatedProduct.id,
+        product: updatedProduct,
+      })
+    );
+  }
+  closeEditDialog(): void {
+    this.showEditDialog = false;
+    this.editingProduct = undefined;
   }
 }

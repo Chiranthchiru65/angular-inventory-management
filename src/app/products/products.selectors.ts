@@ -39,3 +39,8 @@ export const selectIsCreating = createSelector(
   selectProductsState,
   (state: ProductsState) => state.creating
 );
+// Kitchen assistant who answers: "Are we currently updating a product?"
+export const selectIsUpdating = createSelector(
+  selectProductsState,
+  (state: ProductsState) => state.updating
+);

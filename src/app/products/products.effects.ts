@@ -13,6 +13,9 @@ import {
   createProduct,
   createProductSuccess,
   createProductFailure,
+  updateProduct,
+  updateProductSuccess,
+  updateProductFailure,
 } from './products.actions';
 
 @Injectable()
@@ -80,6 +83,32 @@ export class ProductsEffects {
             of(
               createProductFailure({
                 error: error.message || 'Failed to create product',
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+  // The delivery driver effect for updating products
+  updateProduct$ = createEffect(() =>
+    this.actions$.pipe(
+      // Driver listens for "updateProduct" orders over the radio
+      ofType(updateProduct),
+
+      // Driver goes to supplier to update the product
+      switchMap(({ id, product }) =>
+        this.productService.updateProduct(id, product).pipe(
+          // If successful: Driver brings back the updated product
+          map((updatedProduct) =>
+            updateProductSuccess({ product: updatedProduct })
+          ),
+
+          // If failed: Driver reports "couldn't update product"
+          catchError((error) =>
+            of(
+              updateProductFailure({
+                error: error.message || 'Failed to update product',
               })
             )
           )
