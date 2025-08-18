@@ -31,6 +31,9 @@ import {
   selectIsUpdating,
 } from '../../products/products.selectors';
 import { AddProductDialog } from '../../components/add-product-dialog/add-product-dialog';
+import { ConfirmationDialogComponent } from '../../components/confirmationDialog';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-products',
@@ -85,7 +88,11 @@ export class Products implements OnInit {
     'actions',
   ];
 
-  constructor(private store: Store) {
+  constructor(
+    private store: Store,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) {
     // subscribe to products for real time updates
     this.isUpdating$ = this.store.select(selectIsUpdating);
 
@@ -270,9 +277,25 @@ export class Products implements OnInit {
   }
 
   onDelete(product: Product): void {
-    // Customer says: "Remove this expired product from inventory!"
-    console.log('Deleting product:', product);
-    this.store.dispatch(deleteProduct({ id: product.id }));
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Product',
+        message: `Are you sure you want to delete "${product.name}"? This action cannot be undone.`,
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('Deleting product:', product);
+        this.store.dispatch(deleteProduct({ id: product.id }));
+        this.snackBar.open('Product deleted successfully!', 'Close', {
+          duration: 3000,
+        });
+      }
+    });
   }
 
   isProductDeleting(productId: number, deletingIds: number[] | null): boolean {
@@ -282,6 +305,9 @@ export class Products implements OnInit {
     // Customer says: "Add this new product to our inventory!"
     console.log('Adding new product:', productData);
     this.store.dispatch(createProduct({ product: productData }));
+    this.snackBar.open('Product Added successfully!', 'Close', {
+      duration: 3000,
+    });
   }
   onProductUpdated(updatedProduct: Product): void {
     console.log('Updating product:', updatedProduct);
@@ -291,6 +317,9 @@ export class Products implements OnInit {
         product: updatedProduct,
       })
     );
+    this.snackBar.open('Product updated successfully!', 'Close', {
+      duration: 3000,
+    });
   }
   closeEditDialog(): void {
     this.showEditDialog = false;
