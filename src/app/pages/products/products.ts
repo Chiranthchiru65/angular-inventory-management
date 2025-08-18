@@ -302,7 +302,6 @@ export class Products implements OnInit {
     return deletingIds ? deletingIds.includes(productId) : false;
   }
   onProductAdded(productData: Omit<Product, 'id'>): void {
-    // Customer says: "Add this new product to our inventory!"
     console.log('Adding new product:', productData);
     this.store.dispatch(createProduct({ product: productData }));
     this.snackBar.open('Product Added successfully!', 'Close', {

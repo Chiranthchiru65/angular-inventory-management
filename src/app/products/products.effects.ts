@@ -44,16 +44,12 @@ export class ProductsEffects {
   );
   deleteProduct$ = createEffect(() =>
     this.actions$.pipe(
-      // Driver listens for "deleteProduct" orders over the radio
       ofType(deleteProduct),
 
-      // Driver goes to supplier to remove the product
       switchMap(({ id }) =>
         this.productService.deleteProduct(id).pipe(
-          // If successful: Driver confirms "product removed!"
           map(() => deleteProductSuccess({ id })),
 
-          // If failed: Driver reports "couldn't remove product"
           catchError((error) =>
             of(
               deleteProductFailure({
@@ -66,19 +62,14 @@ export class ProductsEffects {
       )
     )
   );
-  // The delivery driver effect for creating products
   createProduct$ = createEffect(() =>
     this.actions$.pipe(
-      // Driver listens for "createProduct" orders over the radio
       ofType(createProduct),
 
-      // Driver goes to supplier to add the new product
       switchMap(({ product }) =>
         this.productService.createProduct(product).pipe(
-          // If successful: Driver brings back the new product with server-generated ID
           map((newProduct) => createProductSuccess({ product: newProduct })),
 
-          // If failed: Driver reports "couldn't add new product"
           catchError((error) =>
             of(
               createProductFailure({
@@ -90,21 +81,16 @@ export class ProductsEffects {
       )
     )
   );
-  // The delivery driver effect for updating products
   updateProduct$ = createEffect(() =>
     this.actions$.pipe(
-      // Driver listens for "updateProduct" orders over the radio
       ofType(updateProduct),
 
-      // Driver goes to supplier to update the product
       switchMap(({ id, product }) =>
         this.productService.updateProduct(id, product).pipe(
-          // If successful: Driver brings back the updated product
           map((updatedProduct) =>
             updateProductSuccess({ product: updatedProduct })
           ),
 
-          // If failed: Driver reports "couldn't update product"
           catchError((error) =>
             of(
               updateProductFailure({
